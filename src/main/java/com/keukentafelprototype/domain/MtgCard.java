@@ -10,8 +10,23 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MtgCard {
 
+    @JsonProperty(value = "name")
     private String name;
+
+    @JsonProperty(value = "set_name")
+    private String setName;
+
+    @JsonProperty(value = "mana_cost")
+    private String manaCost;
+
+    @JsonProperty(value = "cmc")
+    private float cmc;
+
+    @JsonProperty(value = "id")
     private String id;
+
+    @JsonProperty(value = "legalities")
+    private Legalities legalities;
 
     @JsonProperty(value = "image_uris")
     private ImageUris imageUris;

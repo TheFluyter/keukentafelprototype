@@ -1,7 +1,7 @@
 package com.keukentafelprototype.collector;
 
 import com.keukentafelprototype.domain.MtgCard;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,15 +11,14 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class MtgCardController {
 
-    private static final String SCRYFALL_API = "https://api.scryfall.com/cards/random";
     private final RestTemplate restTemplate;
 
     public MtgCardController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    @RequestMapping(value = "/random")
+    @GetMapping(value = "/random")
     public MtgCard random() {
-        return restTemplate.getForObject(SCRYFALL_API, MtgCard.class);
+        return restTemplate.getForObject("cards/random", MtgCard.class);
     }
 }
