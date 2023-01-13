@@ -11,14 +11,14 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class MtgCardController {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate scryfallRestTemplate;
 
-    public MtgCardController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public MtgCardController(RestTemplate scryfallRestTemplate) {
+        this.scryfallRestTemplate = scryfallRestTemplate;
     }
 
-    @GetMapping(value = "/random")
+    @GetMapping(value = "random")
     public MtgCard random() {
-        return restTemplate.getForObject("cards/random", MtgCard.class);
+        return scryfallRestTemplate.getForObject("cards/random", MtgCard.class);
     }
 }
