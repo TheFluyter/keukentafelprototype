@@ -26,11 +26,7 @@ public class Card {
     @Column(name = "name")
     private String name;
 
-    @Override
-    public String toString() {
-        return "Card{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            '}';
-    }
+    @Column(name = "set_name")
+    private String setName;
+
 }

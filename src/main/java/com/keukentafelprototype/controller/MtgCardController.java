@@ -3,11 +3,14 @@ package com.keukentafelprototype.controller;
 import com.keukentafelprototype.domain.MtgCard;
 import com.keukentafelprototype.repository.CardRepository;
 import com.keukentafelprototype.model.Card;
+import org.hibernate.PropertyNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -39,5 +42,16 @@ public class MtgCardController {
     @PostMapping("cards")
     public Card createCard(@RequestBody Card card) {
         return cardRepository.save(card);
+    }
+
+    @DeleteMapping("cards/{id}")
+    public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Long cardId) {
+        Card card = cardRepository.findById(cardId).orElseThrow(() ->
+            new PropertyNotFoundException("Card not found for this id: " + cardId));
+        cardRepository.delete(card);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("delete", Boolean.TRUE);
+        return response;
     }
 }
