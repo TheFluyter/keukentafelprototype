@@ -1,5 +1,6 @@
 package com.keukentafelprototype.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -16,5 +17,10 @@ public class AppConfig {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(uriBuilderFactory);
         return restTemplate;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

@@ -8,3 +8,5 @@ l
 :
 
 .gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
+j
+:src/main/java/com/keukentafelprototype/domain/MtgCard.java,4/0/406e86407a522f11d1e9e0e084b0a71e2b060cc5

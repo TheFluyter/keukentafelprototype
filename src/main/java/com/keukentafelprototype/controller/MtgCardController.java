@@ -5,10 +5,12 @@ import com.keukentafelprototype.dto.CardDTO;
 import com.keukentafelprototype.exception.ResourceNotFoundException;
 import com.keukentafelprototype.model.Card;
 import com.keukentafelprototype.repository.CardRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +25,12 @@ public class MtgCardController {
 
     private final RestTemplate scryfallRestTemplate;
     private final CardRepository cardRepository;
+    private final ModelMapper modelMapper;
 
-    public MtgCardController(RestTemplate scryfallRestTemplate, CardRepository cardRepository) {
+    public MtgCardController(RestTemplate scryfallRestTemplate, CardRepository cardRepository, ModelMapper modelMapper) {
         this.scryfallRestTemplate = scryfallRestTemplate;
         this.cardRepository = cardRepository;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("random")
@@ -53,8 +57,8 @@ public class MtgCardController {
     }
 
     @PostMapping("cards")
-    public ResponseEntity<Card> createCard(@RequestBody CardDTO cardDTO) {
-        Card card = new Card(cardDTO.getName(), cardDTO.getSetName());
+    public ResponseEntity<Card> createCard(@Valid @RequestBody CardDTO cardDTO) {
+        Card card = modelMapper.map(cardDTO, Card.class);
         return ResponseEntity.ok(cardRepository.save(card));
     }
 
