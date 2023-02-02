@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> findByNameContaining(String name);
+    List<Card> findBySetNameContaining(String name);
 }

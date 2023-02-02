@@ -1,9 +1,10 @@
 package com.keukentafelprototype.controller;
 
 import com.keukentafelprototype.domain.MtgCard;
-import com.keukentafelprototype.repository.CardRepository;
+import com.keukentafelprototype.dto.CardDTO;
+import com.keukentafelprototype.exception.ResourceNotFoundException;
 import com.keukentafelprototype.model.Card;
-import org.hibernate.PropertyNotFoundException;
+import com.keukentafelprototype.repository.CardRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.OK;
+import static java.lang.Boolean.TRUE;
 
 /**
  * MTG Card Controller provides different endpoints to retrieve card information via the Scryfall API
@@ -36,22 +37,35 @@ public class MtgCardController {
     @GetMapping("cards")
     public ResponseEntity<List<Card>> getAllCards() {
         List<Card> cards = cardRepository.findAll();
-        return new ResponseEntity<>(cards, OK);
+        return ResponseEntity.ok(cards);
+    }
+
+    @GetMapping("cards/{name}")
+    public ResponseEntity<List<Card>> getCardsByName(@PathVariable(value = "name") String name) {
+        List<Card> cards = cardRepository.findByNameContaining(name);
+        return ResponseEntity.ok(cards);
+    }
+
+    @GetMapping("sets/{setname}")
+    public ResponseEntity<List<Card>> getCardsBySetName(@PathVariable(value = "setname") String setName) {
+        List<Card> cards = cardRepository.findBySetNameContaining(setName);
+        return ResponseEntity.ok(cards);
     }
 
     @PostMapping("cards")
-    public Card createCard(@RequestBody Card card) {
-        return cardRepository.save(card);
+    public ResponseEntity<Card> createCard(@RequestBody CardDTO cardDTO) {
+        Card card = new Card(cardDTO.getName(), cardDTO.getSetName());
+        return ResponseEntity.ok(cardRepository.save(card));
     }
 
     @DeleteMapping("cards/{id}")
-    public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Long cardId) {
+    public ResponseEntity<Map<String, Boolean>> deleteCard(@PathVariable(value = "id") Long cardId) {
         Card card = cardRepository.findById(cardId).orElseThrow(() ->
-            new PropertyNotFoundException("Card not found for this id: " + cardId));
+            new ResourceNotFoundException("Card not found for this id: " + cardId));
         cardRepository.delete(card);
 
         Map<String, Boolean> response = new HashMap<>();
-        response.put("delete", Boolean.TRUE);
-        return response;
+        response.put("delete", TRUE);
+        return ResponseEntity.ok(response);
     }
 }

@@ -14,9 +14,15 @@ public class Card {
     public Card() {
     }
 
-    public Card(long id, String name) {
+    public Card(String name, String setName) {
+        this.name = name;
+        this.setName = setName;
+    }
+
+    public Card(long id, String name, String setName) {
         this.id = id;
         this.name = name;
+        this.setName = setName;
     }
 
     @Id
