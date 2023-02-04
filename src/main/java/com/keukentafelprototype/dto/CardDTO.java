@@ -22,4 +22,5 @@ public class CardDTO {
 
     @NotBlank(message = "Set name is mandatory")
     private String setName;
+
 }

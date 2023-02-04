@@ -65,7 +65,7 @@ public class MtgCardController {
     @DeleteMapping("cards/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteCard(@PathVariable(value = "id") Long cardId) {
         Card card = cardRepository.findById(cardId).orElseThrow(() ->
-            new ResourceNotFoundException("Card not found for this id: " + cardId));
+            new ResourceNotFoundException("Card not found for id: " + cardId));
         cardRepository.delete(card);
 
         Map<String, Boolean> response = new HashMap<>();
