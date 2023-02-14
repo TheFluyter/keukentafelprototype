@@ -1,10 +1,13 @@
 package com.keukentafelprototype.collector;
 
 import com.keukentafelprototype.config.AppConfig;
+import com.keukentafelprototype.repository.CardRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +18,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ScryfallBulkCollector.class, AppConfig.class})
+@SpringBootTest(classes = {ScryfallBulkCollector.class, AppConfig.class, CardRepository.class})
 @TestPropertySource("classpath:config/test.properties")
 class ScryfallBulkCollectorTest {
 
@@ -25,6 +28,7 @@ class ScryfallBulkCollectorTest {
     @Autowired
     ScryfallBulkCollector scryfallBulkCollector;
 
+    // TODO use H2 database
     @Test
     void testDownloadCardBulkData() throws IOException {
         String downloadUriResponse = Files.readString(Path.of("src/test/resources/input/bulk-data.json"));

@@ -23,7 +23,7 @@ public class MtgCard {
     private float cmc;
 
     @JsonProperty(value = "id")
-    private String id;
+    private String scryfallId;
 
     @JsonProperty(value = "legalities")
     private Legalities legalities;
@@ -35,7 +35,12 @@ public class MtgCard {
     public String toString() {
         return "MtgCard{" +
             "name='" + name + '\'' +
-            ", id='" + id + '\'' +
+            ", setName='" + setName + '\'' +
+            ", manaCost='" + manaCost + '\'' +
+            ", cmc=" + cmc +
+            ", id='" + scryfallId + '\'' +
+            ", legalities=" + legalities +
+            ", imageUris=" + imageUris +
             '}';
     }
 }

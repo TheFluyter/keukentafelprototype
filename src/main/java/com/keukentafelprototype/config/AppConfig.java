@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import static org.modelmapper.convention.MatchingStrategies.STRICT;
+
 @Configuration
 public class AppConfig {
 
@@ -22,7 +24,10 @@ public class AppConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(STRICT);
+        return modelMapper;
     }
 
     @Bean
