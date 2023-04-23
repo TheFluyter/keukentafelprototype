@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MtgCard {
+public class MtgCardDTO {
 
     @JsonProperty(value = "name")
     private String name;

@@ -1,6 +1,8 @@
 package com.keukentafelprototype.controller;
 
-import com.keukentafelprototype.domain.MtgCard;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.keukentafelprototype.collector.ScryfallBulkCollector;
+import com.keukentafelprototype.domain.MtgCardDTO;
 import com.keukentafelprototype.dto.CardDTO;
 import com.keukentafelprototype.exception.ResourceNotFoundException;
 import com.keukentafelprototype.model.Card;
@@ -26,16 +28,21 @@ public class MtgCardController {
     private final RestTemplate scryfallRestTemplate;
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
+    private final ScryfallBulkCollector scryfallBulkCollector;
 
-    public MtgCardController(RestTemplate scryfallRestTemplate, CardRepository cardRepository, ModelMapper modelMapper) {
+    public MtgCardController(RestTemplate scryfallRestTemplate,
+                             CardRepository cardRepository,
+                             ModelMapper modelMapper,
+                             ScryfallBulkCollector scryfallBulkCollector) {
         this.scryfallRestTemplate = scryfallRestTemplate;
         this.cardRepository = cardRepository;
         this.modelMapper = modelMapper;
+        this.scryfallBulkCollector = scryfallBulkCollector;
     }
 
     @GetMapping("random")
-    public MtgCard random() {
-        return scryfallRestTemplate.getForObject("cards/random", MtgCard.class);
+    public MtgCardDTO random() {
+        return scryfallRestTemplate.getForObject("cards/random", MtgCardDTO.class);
     }
 
     @GetMapping("cards")
@@ -71,5 +78,10 @@ public class MtgCardController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("delete", TRUE);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("bulk/download")
+    public void downloadBulk() throws JsonProcessingException {
+        scryfallBulkCollector.downloadCardBulkData();
     }
 }
