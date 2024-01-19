@@ -1,4 +1,4 @@
-package com.keukentafelprototype.collector;
+package com.keukentafelprototype.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,61 +20,54 @@ import java.util.stream.Collectors;
 public class ScryfallBulkCollector {
 
     private final RestTemplate scryfallRestTemplate;
+    private final RestTemplate restTemplate;
     private final MtgCardRepository mtgCardRepository;
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
 
     public ScryfallBulkCollector(RestTemplate scryfallRestTemplate,
+                                 RestTemplate restTemplate,
                                  MtgCardRepository mtgCardRepository,
                                  ObjectMapper objectMapper,
                                  ModelMapper modelMapper) {
         this.scryfallRestTemplate = scryfallRestTemplate;
+        this.restTemplate = restTemplate;
         this.mtgCardRepository = mtgCardRepository;
         this.objectMapper = objectMapper;
         this.modelMapper = modelMapper;
     }
 
-    public void downloadCardBulkData() throws JsonProcessingException {
-        String json = scryfallRestTemplate.getForObject("bulk-data/", String.class);
-        log.info("Retrieved following json: {}", json);
-        String downloadUri = retrieveDownloadId();
-        log.info("Download URI: {}", downloadUri);
-        RestTemplate restTemplate = new RestTemplate();
-        String bulkDataJson = restTemplate.getForObject(downloadUri, String.class);
-        log.info("Download bulk data");
-
-        List<MtgCardDTO> mtgCardsDTO = mapJsonToMtgCards(bulkDataJson);
-        log.info("Mapping from json to MTG Cards DTO list successful");
-        List<MtgCard> mtgCards = convertToEntity(mtgCardsDTO);
-        log.info("Mapping from MTG Card DTO List to MTG Card List successful");
+    public void downloadAllMtgDefaultCards() throws JsonProcessingException {
+        String allDefaultMtgCardsJson = restTemplate.getForObject(retrieveDownloadId(), String.class);
+        List<MtgCardDTO> mtgCardsDTO = mapJsonToMtgCardDtoList(allDefaultMtgCardsJson);
+        List<MtgCard> mtgCards = convertMtgCardDtoToEntity(mtgCardsDTO);
 
         for (int i = 0; i < 5; i++) {
-            log.info("MTG Card: {}", mtgCardsDTO.get(i));
             log.info("Card: {},", mtgCards.get(i));
             mtgCardRepository.save(mtgCards.get(i));
         }
     }
 
-    private List<MtgCardDTO> mapJsonToMtgCards(String json) throws JsonProcessingException {
+    private String retrieveDownloadId() throws JsonProcessingException {
+        String dataDetailsJson = scryfallRestTemplate.getForObject("bulk-data", String.class);
+        JsonNode dataDetailsNode = objectMapper.readTree(dataDetailsJson);
+
+        for (JsonNode jsonNode : dataDetailsNode.get("data")) {
+            if (jsonNode.get("type").asText().equals("default_cards")) {
+                return jsonNode.get("download_uri").asText();
+            }
+        }
+        return "";
+    }
+
+    private List<MtgCardDTO> mapJsonToMtgCardDtoList(String json) throws JsonProcessingException {
         TypeReference<List<MtgCardDTO>> typeReference = new TypeReference<>(){};
         return objectMapper.readValue(json, typeReference);
     }
 
-    private List<MtgCard> convertToEntity(List<MtgCardDTO> mtgCardsDTO) {
-        return mtgCardsDTO.stream()
-            .map(mtgCard -> modelMapper.map(mtgCard, MtgCard.class))
+    private List<MtgCard> convertMtgCardDtoToEntity(List<MtgCardDTO> mtgCardDtoList) {
+        return mtgCardDtoList.stream()
+            .map(mtgCardDto -> modelMapper.map(mtgCardDto, MtgCard.class))
             .collect(Collectors.toList());
-    }
-
-    private String retrieveDownloadId() throws JsonProcessingException {
-        String bulkDataString = scryfallRestTemplate.getForObject("bulk-data", String.class);
-        JsonNode bulkDataNode = objectMapper.readTree(bulkDataString);
-
-        for (JsonNode dataNode : bulkDataNode.get("data")) {
-            if (dataNode.get("type").asText().equals("default_cards")) {
-                return dataNode.get("download_uri").asText();
-            }
-        }
-        return "";
     }
 }

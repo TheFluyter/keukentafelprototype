@@ -1,7 +1,6 @@
 package com.keukentafelprototype.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.keukentafelprototype.collector.ScryfallBulkCollector;
 import com.keukentafelprototype.domain.MtgCardDTO;
 import com.keukentafelprototype.dto.CardDTO;
 import com.keukentafelprototype.exception.ResourceNotFoundException;
@@ -82,6 +81,6 @@ public class MtgCardController {
 
     @GetMapping("bulk/download")
     public void downloadBulk() throws JsonProcessingException {
-        scryfallBulkCollector.downloadCardBulkData();
+        scryfallBulkCollector.downloadAllMtgDefaultCards();
     }
 }
